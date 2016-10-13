@@ -14,22 +14,20 @@ import java.util.List;
  */
 public class HomePresenter extends MvpPresenter<HomeView> implements HomeModel.Model {
 
-    private HomeView mHomeView;
-
     @UiThread
     public void loadData() {
-        mHomeView.showLoading();
+        getView().showLoading();
         new HomeModel(this).asyncLoadData();
     }
 
     @UiThread
     @Override public void setData(List<String> datas) {
-        mHomeView.hideLoading();
+        getView().hideLoading();
         if (datas == null) {
-            mHomeView.showMessage("未知错识!数据获取失败!");
+            getView().showMessage("未知错识!数据获取失败!");
             return;
         }
-        mHomeView.refreshListView(datas);
+        getView().refreshListView(datas);
     }
 
     // 一个HomeView接口(视图接口)空的实现

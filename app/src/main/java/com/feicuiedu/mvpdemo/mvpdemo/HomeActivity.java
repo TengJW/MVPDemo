@@ -37,6 +37,9 @@ public class HomeActivity extends AppCompatActivity implements HomeView{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        // Presenter
+        mHomePresenter = new HomePresenter();
+        mHomePresenter.attachView(this);
     }
 
     @Override public void onContentChanged() {
@@ -46,9 +49,6 @@ public class HomeActivity extends AppCompatActivity implements HomeView{
         // 设置ListView的适配器,我们使用的是arrayAdapter
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         listView.setAdapter(arrayAdapter);
-        // Presenter
-        mHomePresenter = new HomePresenter();
-        mHomePresenter.attachView(this);
     }
 
     @Override protected void onDestroy() {
