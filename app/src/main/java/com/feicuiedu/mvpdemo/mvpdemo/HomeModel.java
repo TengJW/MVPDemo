@@ -15,7 +15,9 @@ import java.util.List;
  */
 public class HomeModel {
 
-    /** 业务层接口*/
+    /**
+     * 业务层接口
+     */
     public interface Model {
         void setData(List<String> datas);
     }
@@ -29,9 +31,15 @@ public class HomeModel {
         mHandler = new Handler(Looper.getMainLooper()) {
             @Override public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if (msg.what == 1) {
-                    List<String> datas = (List<String>) msg.obj;
-                    mModel.setData(datas);
+                switch (msg.what) {
+                    case 1:
+                        List<String> datas = (List<String>) msg.obj;
+                        mModel.setData(datas);
+                        break;
+                    case 2:
+                    default:
+                        mModel.setData(null);
+                        break;
                 }
             }
         };
@@ -49,15 +57,26 @@ public class HomeModel {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                List<String> datas = new ArrayList<>();
-                for (int i = 0; i < 20; i++) {
-                    datas.add("我是第 " + i + " 条数据");
+                // TODO: 2016/10/13 0013 只是模拟数据加载
+                // 错误情况
+                if (System.currentTimeMillis() % 2 == 0) {
+                    // 反馈M层数据
+                    Message message = Message.obtain();
+                    message.what = 2;
+                    mHandler.sendMessage(message);
                 }
-                // 反馈M层数据
-                Message message = Message.obtain();
-                message.what = 1;
-                message.obj = datas;
-                mHandler.sendMessage(message);
+                // 正确情况
+                else {
+                    List<String> datas = new ArrayList<>();
+                    for (int i = 0; i < 20; i++) {
+                        datas.add("我是第 " + i + " 条数据");
+                    }
+                    // 反馈M层数据
+                    Message message = Message.obtain();
+                    message.what = 1;
+                    message.obj = datas;
+                    mHandler.sendMessage(message);
+                }
             }
         });
         mThread.start();

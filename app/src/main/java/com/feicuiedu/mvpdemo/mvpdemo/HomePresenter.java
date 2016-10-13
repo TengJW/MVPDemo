@@ -2,6 +2,8 @@ package com.feicuiedu.mvpdemo.mvpdemo;
 
 import android.support.annotation.UiThread;
 
+import com.feicuiedu.mvpdemo.mvpdemo.basemvp.MvpPresenter;
+
 import java.util.List;
 
 /**
@@ -10,13 +12,9 @@ import java.util.List;
  * 作者：yuanchao on 2016/10/13 0013 14:46
  * 邮箱：yuanchao@feicuiedu.com
  */
-public class HomePresenter implements HomeModel.Model {
+public class HomePresenter extends MvpPresenter<HomeView> implements HomeModel.Model {
 
     private HomeView mHomeView;
-
-    public HomePresenter(HomeView homeView) {
-        mHomeView = homeView;
-    }
 
     @UiThread
     public void loadData() {
@@ -28,9 +26,23 @@ public class HomePresenter implements HomeModel.Model {
     @Override public void setData(List<String> datas) {
         mHomeView.hideLoading();
         if (datas == null) {
-            mHomeView.showMessage("未知错识!");
+            mHomeView.showMessage("未知错识!数据获取失败!");
             return;
         }
         mHomeView.refreshListView(datas);
+    }
+
+    // 一个HomeView接口(视图接口)空的实现
+    protected final HomeView getNullObject(){
+        HomeView homeView = new HomeView() {
+            @Override public void showLoading() {}
+
+            @Override public void hideLoading() {}
+
+            @Override public void refreshListView(List<String> datas) {}
+
+            @Override public void showMessage(String msg) {}
+        };
+        return homeView;
     }
 }
