@@ -1,8 +1,6 @@
 package com.feicuiedu.mvpdemo.mvpdemo;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,35 +13,7 @@ import java.util.List;
  */
 public class HomeModel {
 
-    /**
-     * 业务层接口
-     */
-    public interface Model {
-        void setData(List<String> datas);
-    }
-
     private Thread mThread;
-    private Model mModel;
-    private Handler mHandler;
-
-    public HomeModel(Model model) {
-        mModel = model;
-        mHandler = new Handler(Looper.getMainLooper()) {
-            @Override public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what) {
-                    case 1:
-                        List<String> datas = (List<String>) msg.obj;
-                        mModel.setData(datas);
-                        break;
-                    case 2:
-                    default:
-                        mModel.setData(null);
-                        break;
-                }
-            }
-        };
-    }
 
     public void asyncLoadData() {
         if (mThread != null) {
@@ -61,9 +31,7 @@ public class HomeModel {
                 // 错误情况
                 if (System.currentTimeMillis() % 2 == 0) {
                     // 反馈M层数据
-                    Message message = Message.obtain();
-                    message.what = 2;
-                    mHandler.sendMessage(message);
+                    EventBus.getDefault().post(new HomeEvent());
                 }
                 // 正确情况
                 else {
@@ -72,10 +40,7 @@ public class HomeModel {
                         datas.add("我是第 " + i + " 条数据");
                     }
                     // 反馈M层数据
-                    Message message = Message.obtain();
-                    message.what = 1;
-                    message.obj = datas;
-                    mHandler.sendMessage(message);
+                    EventBus.getDefault().post(new HomeEvent(datas));
                 }
             }
         });
